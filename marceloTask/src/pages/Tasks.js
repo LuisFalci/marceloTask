@@ -51,8 +51,8 @@ export default function Tasks() {
                     tasks && tasks.length > 0 ?
                         tasks.map((task) => {
                             return (
-                                <TouchableOpacity onPress={() => handleTaskDoubleClick(task)}>
-                                    <View style={styles.taskContainer} key={task.id}>
+                                <TouchableOpacity onPress={() => handleTaskDoubleClick(task)} key={task.id}>
+                                    <View style={styles.taskContainer}>
                                         <Text>{task.title}</Text>
                                         <View style={styles.buttonsContainer}>
                                             <Ionicons name="close-circle" size={50} color="#FF0000" onPress={() => deleteTask(task.id)} />
