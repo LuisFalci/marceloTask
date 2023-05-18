@@ -4,6 +4,7 @@ import MainNavigator from './src/routes/MyTabs';
 import { StatusBar } from 'expo-status-bar';
 import SignIn from './src/pages/SingIn';
 import actions from './src/services/sqlite/User';
+import { ThemeProvider } from './src/utils/ThemeProvider';
 
 function App() {
   const [userRegistered, setUserRegistered] = useState(false);
@@ -39,14 +40,16 @@ function App() {
 
   return (
     <>
-      <StatusBar hidden={true} />
-      <NavigationContainer>
-        {!userRegistered ? (
-          <SignIn updateUserRegistration={updateUserRegistration} />
-        ) : (
-          <MainNavigator /> 
-        )}  
-      </NavigationContainer>
+      <ThemeProvider>
+        <StatusBar hidden={true} />
+        <NavigationContainer>
+          {!userRegistered ? (
+            <SignIn updateUserRegistration={updateUserRegistration} />
+          ) : (
+            <MainNavigator />
+          )}
+        </NavigationContainer>
+      </ThemeProvider>
     </>
   );
 }

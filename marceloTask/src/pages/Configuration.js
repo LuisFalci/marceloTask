@@ -1,38 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import CheckBox from 'expo-checkbox';
 import { Ionicons } from '@expo/vector-icons';
-import { getTheme, setTheme } from '../utils/themeStorage';
+import { ThemeContext } from '../utils/ThemeProvider';
+import { setTheme } from '../utils/themeStorage';
 
 export default function Configuration() {
-    const [notificationEnabled, setNotificationEnabled] = useState(false);
-    const [darkModeEnabled, setDarkModeEnabled] = useState(false);
+  const { darkModeEnabled, toggleDarkMode } = useContext(ThemeContext);
+  const [notificationEnabled, setNotificationEnabled] = useState(false);
 
-    useEffect(() => {
-        loadTheme();
-    }, []);
+  useEffect(() => {
+    setTheme(darkModeEnabled);
+  }, [darkModeEnabled]);
 
-    const loadTheme = async () => {
-        const storedTheme = await getTheme();
-        setDarkModeEnabled(storedTheme);
-    };
-
-    const toggleDarkMode = async () => {
-        const updatedTheme = !darkModeEnabled;
-        setDarkModeEnabled(updatedTheme);
-        setTheme(updatedTheme);
-    };
-
-    return (
-        <View style={[styles.container, darkModeEnabled && styles.darkModeContainer]}>
-            <View style={[styles.header, darkModeEnabled && styles.darkModeContainer]}>
-                <Ionicons name="person" size={60} color={darkModeEnabled ? '#fff' : 'black'} />
-            </View>
-            <View style={styles.inputContainer}>
-                <Text style={[styles.label, darkModeEnabled && styles.darkModeLabel]}>Nome</Text>
-                <TextInput style={[styles.input, darkModeEnabled && styles.darkModeInput]} />
-            </View>
-            <View style={styles.checkboxContainer}>
+  return (
+    <View style={[styles.container, darkModeEnabled && styles.darkModeContainer]}>
+      <View style={[styles.header, darkModeEnabled && styles.darkModeContainer]}>
+        <Ionicons name="person" size={60} color={darkModeEnabled ? '#fff' : 'black'} />
+      </View>
+      <View style={styles.inputContainer}>
+        <Text style={[styles.label, darkModeEnabled && styles.darkModeLabel]}>Nome</Text>
+        <TextInput style={[styles.input, darkModeEnabled && styles.darkModeInput]} />
+      </View>
+      <View style={styles.checkboxContainer}>
                 <CheckBox
                     disabled={false}
                     value={notificationEnabled}
@@ -41,95 +31,90 @@ export default function Configuration() {
                 />
                 <Text style={[styles.checkboxLabel, darkModeEnabled && styles.darkModeCheckboxLabel]}>Ativar Notificação</Text>
             </View>
-            <View style={styles.checkboxContainer}>
-                <CheckBox
-                    disabled={false}
-                    value={darkModeEnabled}
-                    onValueChange={toggleDarkMode}
-                    style={styles.checkbox}
-                />
-                <Text style={[styles.checkboxLabel, darkModeEnabled && styles.darkModeCheckboxLabel]}>Ativar Dark Mode</Text>
-            </View>
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Salvar</Text>
-            </TouchableOpacity>
-        </View>
-    );
+      <View style={styles.checkboxContainer}>
+        <CheckBox
+          disabled={false}
+          value={darkModeEnabled}
+          onValueChange={toggleDarkMode}
+          style={styles.checkbox}
+        />
+        <Text style={[styles.checkboxLabel, darkModeEnabled && styles.darkModeCheckboxLabel]}>Ativar Dark Mode</Text>
+      </View>
+      <TouchableOpacity style={styles.button}>
+        <Text style={styles.buttonText}>Salvar</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-    },
-    darkModeContainer: {
-        backgroundColor: "#000",
-    },
-    header: {
-        height: 80,
-        backgroundColor: "#fff",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    icon: {
-        width: 40,
-        height: 40,
-        tintColor: "#D9D9D9",
-    },
-    inputContainer: {
-        marginVertical: 20,
-        marginHorizontal: 40,
-    },
-    label: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginBottom: 8,
-        color: "#000",
-    },
-    darkModeLabel: {
-        color: "#fff",
-    },
-    input: {
-        height: 40,
-        backgroundColor: "#D9D9D9",
-        borderRadius: 10,
-        paddingHorizontal: 10,
-        color: "#000",
-    },
-    darkModeInput: {
-        color: "#fff",
-    },
-    checkboxContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginHorizontal: 40,
-        marginBottom: 10,
-    },
-    checkbox: {
-        marginRight: 10,
-        width: 40,
-        height: 40,
-        marginTop: 15,
-    },
-    checkboxLabel: {
-        fontSize: 16,
-        color: "#000",
-    },
-    darkModeCheckboxLabel: {
-        color: "#fff",
-    },
-    button: {
-        height: 50,
-        backgroundColor: "#1C6B3C",
-        borderRadius: 10,
-        alignItems: "center",
-        justifyContent: "center",
-        marginHorizontal: 10,
-        marginTop: 200,
-    },
-    buttonText: {
-        color: "#fff",
-        fontSize: 18,
-        fontWeight: "bold",
-    },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  darkModeContainer: {
+    backgroundColor: "#000",
+  },
+  header: {
+    height: 80,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  inputContainer: {
+    marginVertical: 20,
+    marginHorizontal: 40,
+  },
+  label: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 8,
+    color: "#000",
+  },
+  darkModeLabel: {
+    color: "#fff",
+  },
+  input: {
+    height: 40,
+    backgroundColor: "#D9D9D9",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    color: "#000",
+  },
+  darkModeInput: {
+    color: "#fff",
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: 40,
+    marginBottom: 10,
+  },
+  checkbox: {
+    marginRight: 10,
+    width: 40,
+    height: 40,
+    marginTop: 15,
+  },
+  checkboxLabel: {
+    fontSize: 16,
+    color: "#000",
+  },
+  darkModeCheckboxLabel: {
+    color: "#fff",
+  },
+  button: {
+    height: 50,
+    backgroundColor: "#1C6B3C",
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 10,
+    marginTop: 200,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
 });
