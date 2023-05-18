@@ -1,15 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import actions from "../services/sqlite/Task";
 import { useNavigation } from '@react-navigation/native';
+import { getTheme } from '../utils/themeStorage';
 
 export default function Tasks() {
     const navigation = useNavigation();
 
-    const [tasks, setTasks] = useState();
+    const [tasks, setTasks] = useState([]);
+    const [darkModeEnabled, setDarkModeEnabled] = useState(false);
 
-    getTasks();
+    useEffect(() => {
+        loadTheme();
+        getTasks();
+    }, []);
+
+    const loadTheme = async () => {
+        const storedTheme = await getTheme();
+        setDarkModeEnabled(storedTheme);
+    };
 
     function getTasks() {
         actions.all()
@@ -28,19 +38,19 @@ export default function Tasks() {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.titleContainer}>
-                <Text style={styles.title}>Minhas Tarefas</Text>
+        <View style={[styles.container, darkModeEnabled && styles.darkModeContainer]}>
+            <View style={[styles.titleContainer, darkModeEnabled && styles.darkModeTitleContainer]}>
+                <Text style={[styles.title, darkModeEnabled && styles.darkModeTitle]}>Minhas Tarefas</Text>
             </View>
 
             {/* Barra de buscas */}
-            <View style={styles.searchBar}>
+            <View style={[styles.searchBar, darkModeEnabled && styles.darkModeSearchBar]}>
                 <View style={styles.searchIconContainer}>
-                    <Ionicons name="search" size={30} color="#000000" />
+                    <Ionicons name="search" size={30} color={darkModeEnabled ? "#FFFFFF" : "#000000"} />
                 </View>
-                <Text style={styles.searchText}>Buscar tarefas</Text>
+                <Text style={[styles.searchText, darkModeEnabled && styles.darkModeSearchText]}>Buscar tarefas</Text>
                 <View style={styles.filterIconContainer}>
-                    <Ionicons name="funnel" size={30} color="#000000" />
+                    <Ionicons name="funnel" size={30} color={darkModeEnabled ? "#FFFFFF" : "#000000"} />
                 </View>
             </View>
             <ScrollView>
@@ -52,8 +62,8 @@ export default function Tasks() {
                         tasks.map((task) => {
                             return (
                                 <TouchableOpacity onPress={() => handleTaskDoubleClick(task)} key={task.id}>
-                                    <View style={styles.taskContainer}>
-                                        <Text>{task.title}</Text>
+                                    <View style={[styles.taskContainer, darkModeEnabled && styles.darkModeTaskContainer]}>
+                                        <Text style={[styles.taskText, darkModeEnabled && styles.darkModeTaskText]}>{task.title}</Text>
                                         <View style={styles.buttonsContainer}>
                                             <Ionicons name="close-circle" size={50} color="#FF0000" onPress={() => deleteTask(task.id)} />
                                             <Ionicons name="checkmark-circle" size={50} color="#30BB3D" />
@@ -81,6 +91,9 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#fff",
     },
+    darkModeContainer: {
+        backgroundColor: "#000",
+    },
     titleContainer: {
         backgroundColor: "#1C6B3C",
         width: "100%",
@@ -88,10 +101,16 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
+    darkModeTitleContainer: {
+        backgroundColor: "#000",
+    },
     title: {
         fontSize: 28,
         fontWeight: "bold",
         color: "#fff"
+    },
+    darkModeTitle: {
+        color: "#fff",
     },
     taskContainer: {
         backgroundColor: "#F6FAFF",
@@ -105,6 +124,16 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         borderWidth: 1,
         borderColor: "#000",
+    },
+    darkModeTaskContainer: {
+        backgroundColor: "#333",
+        borderColor: "#fff",
+    },
+    taskText: {
+        fontSize: 16,
+    },
+    darkModeTaskText: {
+        color: "#fff",
     },
     buttonsContainer: {
         flexDirection: "row-reverse",
@@ -120,12 +149,18 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
         paddingHorizontal: 10,
     },
+    darkModeSearchBar: {
+        backgroundColor: "#333",
+    },
     searchIconContainer: {
         marginRight: 10,
     },
     searchText: {
         flex: 1,
         fontSize: 16,
+    },
+    darkModeSearchText: {
+        color: "#fff",
     },
     filterIconContainer: {
         marginLeft: 10,

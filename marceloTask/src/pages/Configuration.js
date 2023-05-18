@@ -1,20 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import CheckBox from 'expo-checkbox';
 import { Ionicons } from '@expo/vector-icons';
+import { getTheme, setTheme } from '../utils/themeStorage';
 
 export default function Configuration() {
     const [notificationEnabled, setNotificationEnabled] = useState(false);
     const [darkModeEnabled, setDarkModeEnabled] = useState(false);
 
+    useEffect(() => {
+        loadTheme();
+    }, []);
+
+    const loadTheme = async () => {
+        const storedTheme = await getTheme();
+        setDarkModeEnabled(storedTheme);
+    };
+
+    const toggleDarkMode = async () => {
+        const updatedTheme = !darkModeEnabled;
+        setDarkModeEnabled(updatedTheme);
+        setTheme(updatedTheme);
+    };
+
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Ionicons name="person" size={60} color="black" />
+        <View style={[styles.container, darkModeEnabled && styles.darkModeContainer]}>
+            <View style={[styles.header, darkModeEnabled && styles.darkModeContainer]}>
+                <Ionicons name="person" size={60} color={darkModeEnabled ? '#fff' : 'black'} />
             </View>
             <View style={styles.inputContainer}>
-                <Text style={styles.label}>Nome</Text>
-                <TextInput style={styles.input} />
+                <Text style={[styles.label, darkModeEnabled && styles.darkModeLabel]}>Nome</Text>
+                <TextInput style={[styles.input, darkModeEnabled && styles.darkModeInput]} />
             </View>
             <View style={styles.checkboxContainer}>
                 <CheckBox
@@ -23,16 +39,16 @@ export default function Configuration() {
                     onValueChange={(newValue) => setNotificationEnabled(newValue)}
                     style={styles.checkbox}
                 />
-                <Text style={styles.checkboxLabel}>Ativar Notificação</Text>
+                <Text style={[styles.checkboxLabel, darkModeEnabled && styles.darkModeCheckboxLabel]}>Ativar Notificação</Text>
             </View>
             <View style={styles.checkboxContainer}>
                 <CheckBox
                     disabled={false}
                     value={darkModeEnabled}
-                    onValueChange={(newValue) => setDarkModeEnabled(newValue)}
+                    onValueChange={toggleDarkMode}
                     style={styles.checkbox}
                 />
-                <Text style={styles.checkboxLabel}>Ativar Dark Mode</Text>
+                <Text style={[styles.checkboxLabel, darkModeEnabled && styles.darkModeCheckboxLabel]}>Ativar Dark Mode</Text>
             </View>
             <TouchableOpacity style={styles.button}>
                 <Text style={styles.buttonText}>Salvar</Text>
@@ -45,6 +61,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff",
+    },
+    darkModeContainer: {
+        backgroundColor: "#000",
     },
     header: {
         height: 80,
@@ -65,12 +84,20 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
         marginBottom: 8,
+        color: "#000",
+    },
+    darkModeLabel: {
+        color: "#fff",
     },
     input: {
         height: 40,
         backgroundColor: "#D9D9D9",
         borderRadius: 10,
         paddingHorizontal: 10,
+        color: "#000",
+    },
+    darkModeInput: {
+        color: "#fff",
     },
     checkboxContainer: {
         flexDirection: "row",
@@ -82,10 +109,14 @@ const styles = StyleSheet.create({
         marginRight: 10,
         width: 40,
         height: 40,
-        marginTop:15
+        marginTop: 15,
     },
     checkboxLabel: {
         fontSize: 16,
+        color: "#000",
+    },
+    darkModeCheckboxLabel: {
+        color: "#fff",
     },
     button: {
         height: 50,

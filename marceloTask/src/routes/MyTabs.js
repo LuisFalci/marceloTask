@@ -22,17 +22,6 @@ function MainTabNavigator() {
         tabBarShowLabel: false,
       }}>
       <Tab.Screen
-        name="Tasks"
-        component={Tasks}
-        options={{
-          headerShown: false,
-          tabBarLabel: '',
-          tabBarIcon: ({ color, size }) => (
-            <FontAwesome5 name="edit" size={30} color="black" />
-          ),
-        }}
-      />
-      <Tab.Screen
         name="Configuration"
         component={Configuration}
         options={{
@@ -40,6 +29,17 @@ function MainTabNavigator() {
           tabBarLabel: '',
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="settings" size={40} color="black" />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Tasks"
+        component={Tasks}
+        options={{
+          headerShown: false,
+          tabBarLabel: '',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome5 name="edit" size={30} color="black" />
           ),
         }}
       />
