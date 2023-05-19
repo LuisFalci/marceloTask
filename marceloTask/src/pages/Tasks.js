@@ -11,14 +11,17 @@ export default function Tasks() {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    loadTasks();
+    loadTasks()
   }, []);
-
+  
   const loadTasks = () => {
     actions.all()
       .then((response) => setTasks(response))
       .catch((error) => console.error(`Erro ao criar nova tarefa: ${error}`));
   };
+
+  // VER UMA ALTERNATIVA PARA CHAMAR LOADTASK APENAS SE UMA TASK FOI CRIADA
+  loadTasks()
 
   const deleteTask = (id) => {
     actions.remove(id)
