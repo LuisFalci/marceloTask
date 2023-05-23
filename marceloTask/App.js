@@ -1,3 +1,4 @@
+import Spinner from 'react-native-loading-spinner-overlay';
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import MainNavigator from './src/routes/MyTabs';
@@ -8,6 +9,7 @@ import { ThemeProvider } from './src/utils/ThemeProvider';
 
 function App() {
   const [userRegistered, setUserRegistered] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const updateUserRegistration = async () => {
     try {
@@ -22,35 +24,45 @@ function App() {
   useEffect(() => {
     const checkUserRegistration = async () => {
       try {
-        // Resetar user (permite acessar pagina de register)
         // actions.deleteAllUsers();
         const users = await actions.getUser();
-        console.log(users)
         const isUserRegistered = users.length > 0;
         setUserRegistered(isUserRegistered);
+        setLoading(false);
       } catch (error) {
         console.error(error);
-        // Lidar com erros de forma apropriada, como exibir uma mensagem de erro na interface do usuário.
+
       }
     };
-
-    // Chame a função de verificação ao montar o componente
     checkUserRegistration();
   }, []);
 
-  return (
-    <>
+  if (loading) {
+    return (
       <ThemeProvider>
         <StatusBar hidden={true} />
         <NavigationContainer>
-          {!userRegistered ? (
-            <SignIn updateUserRegistration={updateUserRegistration} />
-          ) : (
-            <MainNavigator />
-          )}
+          <Spinner
+            visible={true}
+            textContent={'Carregando...'}
+            textStyle={{ color: '#FFF' }}
+          />
         </NavigationContainer>
       </ThemeProvider>
-    </>
+    );
+  }
+
+  return (
+    <ThemeProvider>
+      <StatusBar hidden={true} />
+      <NavigationContainer>
+        {!userRegistered ? (
+          <SignIn updateUserRegistration={updateUserRegistration} />
+        ) : (
+          <MainNavigator />
+        )}
+      </NavigationContainer>
+    </ThemeProvider>
   );
 }
 

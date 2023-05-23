@@ -2,16 +2,16 @@
 import React, { useContext, useState } from "react";
 import { Ionicons } from '@expo/vector-icons';
 import { Text, SafeAreaView, TouchableOpacity, TextInput, StyleSheet, View } from "react-native";
-import { ThemeContext } from '../utils/ThemeProvider';
+import { ThemeContext } from '../../utils/ThemeProvider';
 
-import actions from "../services/sqlite/Task";
+import actions from "../../services/sqlite/Task";
 
 export default function Create({ navigation }) {
   const { darkModeEnabled } = useContext(ThemeContext);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tasks, setTasks] = useState([]);
-
+  console.log(title)
   const createTask = () => {
     actions.create({ title: title, description: description, duration: '2022-03-28' })
       .then((id) => console.log(`Nova tarefa criada com o ID ${ id }`))

@@ -10,9 +10,9 @@ import {
     Button,
     ScrollView
 } from "react-native";
-import { ThemeContext } from '../utils/ThemeProvider';
+import { ThemeContext } from '../../utils/ThemeProvider';
 
-import actions from "../services/sqlite/Task";
+import actions from "../../services/sqlite/Task";
 
 export default function Edit(props) {
     const { route } = props;

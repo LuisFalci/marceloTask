@@ -142,7 +142,6 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   versionText: {
-    position: 'absolute',
     bottom: 0,
     marginBottom: 12, // ajuste para a altura do seu dispositivo
     fontSize: 12,
@@ -150,7 +149,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   darkModeVersionText: {
-    color: '#000000',
+    color: '#FFFFFF',
   },
   darkModeToggleButton: {
     position: 'absolute',

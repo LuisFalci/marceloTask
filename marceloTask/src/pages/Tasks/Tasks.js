@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
-import actions from "../services/sqlite/Task";
+import actions from "../../services/sqlite/Task";
 import { useNavigation } from '@react-navigation/native';
-import { ThemeContext } from '../utils/ThemeProvider';
+import { ThemeContext } from '../../utils/ThemeProvider';
 
 export default function Tasks() {
   const navigation = useNavigation();

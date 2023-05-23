@@ -3,10 +3,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons, FontAwesome5, AntDesign } from '@expo/vector-icons';
 import Configuration from '../pages/Configuration';
-import Tasks from '../pages/Tasks';
-import Category from '../pages/Category';
-import Create from '../pages/Create';
-import Edit from '../pages/Edit';
+import Tasks from '../pages/Tasks/Tasks';
+import Category from '../pages/Category/Category';
+import Create from '../pages/Tasks/Create';
+import Edit from '../pages/Tasks/Edit';
+import CreateCategory from '../pages/Category/CreateCategory';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -75,6 +76,10 @@ function MainNavigator() {
       <Stack.Screen
         name="Edit"
         component={Edit}
+      />
+      <Stack.Screen
+        name="CreateCategory"
+        component={CreateCategory}
       />
     </Stack.Navigator>
   );

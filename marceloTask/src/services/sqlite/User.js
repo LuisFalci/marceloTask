@@ -2,7 +2,7 @@ import db from './SQLiteDatabase'
 
 db.transaction((tx) => {
   //<<<<<<<<<<<<<<<<<<<<<<<< USE ISSO APENAS DURANTE OS TESTES!!! >>>>>>>>>>>>>>>>>>>>>>>
-  // tx.executeSql("DROP TABLE tasks;");
+  // tx.executeSql("DROP TABLE users;");
   //<<<<<<<<<<<<<<<<<<<<<<<< USE ISSO APENAS DURANTE OS TESTES!!! >>>>>>>>>>>>>>>>>>>>>>>
 
   tx.executeSql(
