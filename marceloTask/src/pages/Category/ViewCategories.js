@@ -13,6 +13,7 @@ export default function ViewCategory() {
     const handleCategoryDoubleClick = (category) => {
         navigation.navigate('EditCategory', { category: category });
     };
+
     useEffect(() => {
         loadCategories();   
       }, []);
@@ -22,7 +23,7 @@ export default function ViewCategory() {
             .then((response) => setCategories(response))
             .catch((error) => console.error(`Erro ao criar nova categoria: ${error}`));
     };
-
+    
     const deleteCategory = (id) => {
         actions.deleteCategory(id)
             .then((response) => setCategories(response))

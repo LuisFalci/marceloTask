@@ -26,12 +26,16 @@ export default function ViewTasks() {
   const deleteTask = (id) => {
     actions
       .deleteTask(id)
-      .then((response) => setTasks(response))
+      .then((response) => {
+        setTasks(response)
+        loadTasks();
+      })
       .catch((error) =>
         console.error(`Erro ao criar nova tarefa: ${error}`)
       );
-  };
 
+  };
+  loadTasks()
   const handleTaskDoubleClick = (task) => {
     navigation.navigate("EditTask", { task: task });
   };
@@ -96,16 +100,17 @@ export default function ViewTasks() {
                   >
                     {task.title}
                   </Text>
+                  <Text style={styles.taskDetailText}>
+                    {task.description}
+                  </Text>
                   <View style={styles.taskDetailsContainer}>
                     <Text style={styles.taskDetailText}>
                       Início: {task.createdAt}
-                    </Text>
-                    <Text style={styles.taskDetailText}>
-                      Término: {task.duration}
-                    </Text>
-                    <Text style={styles.taskDetailText}>
-                      Horário: {task.time}
-                    </Text>
+                      </Text>
+                      <Text style={styles.taskDetailText}>
+                        Término: {task.duration}
+                      </Text>
+                    
                   </View>
                 </View>
                 <View style={styles.buttonsContainer}>
