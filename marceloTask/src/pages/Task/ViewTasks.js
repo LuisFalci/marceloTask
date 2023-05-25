@@ -5,60 +5,121 @@ import actions from "../../services/sqlite/Task";
 import { useNavigation } from '@react-navigation/native';
 import { ThemeContext } from '../../utils/ThemeProvider';
 
-export default function Tasks() {
+export default function ViewTasks() {
   const navigation = useNavigation();
   const { darkModeEnabled } = useContext(ThemeContext);
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    loadTasks()
+    loadTasks();
   }, []);
-  
+
   const loadTasks = () => {
-    actions.all()
+    actions
+      .getUsers()
       .then((response) => setTasks(response))
-      .catch((error) => console.error(`Erro ao criar nova tarefa: ${error}`));
+      .catch((error) =>
+        console.error(`Erro ao criar nova tarefa: ${error}`)
+      );
   };
 
-  // VER UMA ALTERNATIVA PARA CHAMAR LOADTASK APENAS SE UMA TASK FOI CRIADA
-  loadTasks()
-
   const deleteTask = (id) => {
-    actions.remove(id)
+    actions
+      .deleteTask(id)
       .then((response) => setTasks(response))
-      .catch((error) => console.error(`Erro ao criar nova tarefa: ${error}`));
+      .catch((error) =>
+        console.error(`Erro ao criar nova tarefa: ${error}`)
+      );
   };
 
   const handleTaskDoubleClick = (task) => {
-    navigation.navigate('Edit', { task: task });
+    navigation.navigate("EditTask", { task: task });
   };
 
   return (
-    <View style={[styles.container, darkModeEnabled && styles.darkModeContainer]}>
-      <View style={[styles.titleContainer, darkModeEnabled && styles.darkModeTitleContainer]}>
-        <Text style={[styles.title, darkModeEnabled && styles.darkModeTitle]}>Minhas Tarefas</Text>
+    <View
+      style={[
+        styles.container,
+        darkModeEnabled && styles.darkModeContainer,
+      ]}
+    >
+      <View
+        style={[
+          styles.titleContainer,
+          darkModeEnabled && styles.darkModeTitleContainer,
+        ]}
+      >
+        <Text style={[styles.title, darkModeEnabled && styles.darkModeTitle]}>
+          Minhas Tarefas
+        </Text>
       </View>
 
       {/* Barra de buscas */}
-      <View style={[styles.searchBar, darkModeEnabled && styles.darkModeSearchBar]}>
+      <View
+        style={[styles.searchBar, darkModeEnabled && styles.darkModeSearchBar]}
+      >
         <View style={styles.searchIconContainer}>
-          <Ionicons name="search" size={30} color={darkModeEnabled ? "#FFFFFF" : "#000000"} />
+          <Ionicons
+            name="search"
+            size={30}
+            color={darkModeEnabled ? "#FFFFFF" : "#000000"}
+          />
         </View>
-        <Text style={[styles.searchText, darkModeEnabled && styles.darkModeSearchText]}>Buscar tarefas</Text>
+        <Text style={[styles.searchText, darkModeEnabled && styles.darkModeSearchText]}>
+          Buscar tarefas
+        </Text>
         <View style={styles.filterIconContainer}>
-          <Ionicons name="funnel" size={30} color={darkModeEnabled ? "#FFFFFF" : "#000000"} />
+          <Ionicons
+            name="funnel"
+            size={30}
+            color={darkModeEnabled ? "#FFFFFF" : "#000000"}
+          />
         </View>
       </View>
       <ScrollView>
         {/* Containers de tarefa */}
         {tasks && tasks.length > 0 ? (
           tasks.map((task) => (
-            <TouchableOpacity onPress={() => handleTaskDoubleClick(task)} key={task.id}>
-              <View style={[styles.taskContainer, darkModeEnabled && styles.darkModeTaskContainer]}>
-                <Text style={[styles.taskText, darkModeEnabled && styles.darkModeTaskText]}>{task.title}</Text>
+            <TouchableOpacity
+              onPress={() => handleTaskDoubleClick(task)}
+              key={task.id}
+            >
+              <View
+                style={[
+                  styles.taskContainer,
+                  darkModeEnabled && styles.darkModeTaskContainer,
+                ]}
+              >
+                <View>
+                  <Text
+                    style={[styles.taskText, darkModeEnabled && styles.darkModeTaskText]}
+                  >
+                    {task.title}
+                  </Text>
+                  <View style={styles.taskDetailsContainer}>
+                    <Text style={styles.taskDetailText}>
+                      Início: {task.createdAt}
+                    </Text>
+                    <Text style={styles.taskDetailText}>
+                      Término: {task.duration}
+                    </Text>
+                    <Text style={styles.taskDetailText}>
+                      Horário: {task.time}
+                    </Text>
+                  </View>
+                </View>
                 <View style={styles.buttonsContainer}>
-                  <Ionicons name="close-circle" size={50} color="#FF0000" onPress={() => deleteTask(task.id)} />
-                  <Ionicons name="checkmark-circle" size={50} color="#30BB3D" />
+                  <Ionicons
+                    name="close-circle"
+                    size={50}
+                    color="#FF0000"
+                    onPress={() => deleteTask(task.id)}
+                  />
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={50}
+                    color="#30BB3D"
+                  />
                 </View>
               </View>
             </TouchableOpacity>
@@ -67,7 +128,10 @@ export default function Tasks() {
           <Text>Nenhuma tarefa encontrada</Text>
         )}
       </ScrollView>
-      <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('Create')}>
+      <TouchableOpacity
+        style={styles.iconContainer}
+        onPress={() => navigation.navigate("CreateTask")}
+      >
         <Ionicons name="add-circle" size={70} color="#1C6B3C" />
       </TouchableOpacity>
     </View>
@@ -95,7 +159,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#fff"
+    color: "#fff",
   },
   darkModeTitle: {
     color: "#fff",
@@ -157,5 +221,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 20,
     right: 20,
+  },
+  taskDetailsContainer: {
+    marginTop: 10,
+  },
+  taskDetailText: {
+    fontSize: 14,
+    marginBottom: 5,
   },
 });

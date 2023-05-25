@@ -21,8 +21,7 @@ db.transaction((tx) => {
  *  - O resultado da Promise é o ID do registro (criado por AUTOINCREMENT)
  *  - Pode retornar erro (reject) caso exista erro no SQL ou nos parâmetros.
  */
-const create = (obj) => {
-    console.log("create")
+const createTask = (obj) => {
     return new Promise((resolve, reject) => {
         db.transaction((tx) => {
             //comando SQL modificávelr
@@ -48,7 +47,7 @@ const create = (obj) => {
  *  - Pode retornar erro (reject) caso o ID não exista ou então caso ocorra erro no SQL;
  *  - Pode retornar um array vazio caso não existam registros.
  */
-const all = () => {
+const getUsers = () => {
     return new Promise((resolve, reject) => {
       db.transaction((tx) => {
         //comando SQL modificável
@@ -70,7 +69,7 @@ const all = () => {
  *  - O resultado da Promise é o número de linhas afetadas (deletadas);
  *  - Pode retornar erro (reject) caso ocorra erro no SQL.
  */
-const remove = (id) => {
+const deleteTask = (id) => {
     return new Promise((resolve, reject) => {
         db.transaction((tx) => {
             //comando SQL modificável
@@ -92,7 +91,7 @@ const remove = (id) => {
  *  - O resultado da Promise é o número de linhas afetadas (atualizadas);
  *  - Pode retornar erro (reject) caso ocorra erro no SQL ou nos parâmetros.
  */
-const update = (obj) => {
+const updateTask = (obj) => {
     return new Promise((resolve, reject) => {
         db.transaction((tx) => {
             //comando SQL modificável
@@ -108,10 +107,10 @@ const update = (obj) => {
 };
 
 const actions = {
-    create,
-    all,
-    remove,
-    update,
+    createTask,
+    getUsers,
+    deleteTask,
+    updateTask,
 }
 
 export default actions;

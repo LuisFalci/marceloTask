@@ -20,7 +20,7 @@ export default function Configuration() {
 
   const getUserName = async () => {
     try {
-      const user = await actions.getUser();
+      const user = await actions.getUsers();
       if (user.length > 0) {
         setUserName(user[0].name);
         setUserId(user[0].id);
@@ -32,7 +32,7 @@ export default function Configuration() {
 
   const editUser = () => {
     if (userName.length >= 3 && userName.length <= 20 && userId !== '') {
-      actions.update(userId, userName)
+      actions.updateUser(userId, userName)
         .then((rowsAffected) => {
           setErrorMessage('');
           setSuccessMessage('Usuário editado com sucesso!');

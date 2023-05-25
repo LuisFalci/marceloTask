@@ -1,23 +1,20 @@
 
 import React, { useContext, useState } from "react";
-import { Ionicons } from '@expo/vector-icons';
 import { Text, SafeAreaView, TouchableOpacity, TextInput, StyleSheet, View } from "react-native";
 import { ThemeContext } from '../../utils/ThemeProvider';
 
 import actions from "../../services/sqlite/Category";
 
-export default function Create({ navigation }) {
+export default function CreateCategory({ navigation }) {
   const { darkModeEnabled } = useContext(ThemeContext);
   const [title, setTitle] = useState("");
 
   const createCategory = () => {
-    actions.create({ title: title})
+    actions.createCategory({ title: title})
       .then((id) => console.log(`Nova tarefa criada com o ID ${ id }`))
       .catch((error) => console.error(`Erro ao criar nova tarefa: ${ error }`));
   };
-
   
-
   return (
     <SafeAreaView style={[styles.container, darkModeEnabled && styles.darkModeContainer]}>
       <View style={[styles.containerMargin, darkModeEnabled && styles.darkModeContainerMargin]}>

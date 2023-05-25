@@ -1,34 +1,34 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { ThemeContext } from '../../utils/ThemeProvider';
 import { useNavigation } from '@react-navigation/native';
-import actionsCategory from "../../services/sqlite/Category";
+import actions from "../../services/sqlite/Category";
 
-export default function Category() {
+export default function ViewCategory() {
     const navigation = useNavigation();
     const { darkModeEnabled } = useContext(ThemeContext);
     const [categories, setCategories] = useState([]);
 
     const handleCategoryDoubleClick = (category) => {
-        // navigation.navigate('Edit', { category: category });
+        navigation.navigate('EditCategory', { category: category });
     };
+    useEffect(() => {
+        loadCategories();   
+      }, []);
 
     const loadCategories = () => {
-        actionsCategory.all()
+        actions.getCategories()
             .then((response) => setCategories(response))
             .catch((error) => console.error(`Erro ao criar nova categoria: ${error}`));
     };
 
     const deleteCategory = (id) => {
-        actionsCategory.remove(id)
+        actions.deleteCategory(id)
             .then((response) => setCategories(response))
             .catch((error) => console.error(`Erro ao criar nova categoria: ${error}`));
 
     }
-
-    loadCategories()
-    // console.log(categories)
 
     return (
         <View style={[styles.container, darkModeEnabled && styles.darkModeContainer]}>

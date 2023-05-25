@@ -13,7 +13,7 @@ function App() {
 
   const updateUserRegistration = async () => {
     try {
-      const users = await actions.getUser();
+      const users = await actions.getUsers();
       const isUserRegistered = users.length > 0;
       setUserRegistered(isUserRegistered);
     } catch (error) {
@@ -25,7 +25,7 @@ function App() {
     const checkUserRegistration = async () => {
       try {
         // actions.deleteAllUsers();
-        const users = await actions.getUser();
+        const users = await actions.getUsers();
         const isUserRegistered = users.length > 0;
         setUserRegistered(isUserRegistered);
         setLoading(false);

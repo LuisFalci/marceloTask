@@ -14,7 +14,7 @@ import { ThemeContext } from '../../utils/ThemeProvider';
 
 import actions from "../../services/sqlite/Task";
 
-export default function Edit(props) {
+export default function EditTask(props) {
     const { route } = props;
     const { task } = route.params;
     const { darkModeEnabled } = useContext(ThemeContext);
@@ -25,8 +25,9 @@ export default function Edit(props) {
     const [duration, setDuration] = useState(null);
 
     const editTask = () => {
-        actions.update({ id: task.id, title: title, description: description, duration: '2022-03-28' })
-            .then((id) => console.log(`Tarefa editada com o ID ${ id }`))
+        actions.updateTask({ id: task.id, title: title, description: description, duration: '2022-03-28' })
+            .then((id) => {
+                console.log(`Tarefa editada com o ID ${ id }`)})
             .catch((error) => console.error(`Erro ao editar tarefa: ${ error }`));
     };
 

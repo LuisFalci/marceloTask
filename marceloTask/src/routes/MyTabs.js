@@ -3,11 +3,17 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons, FontAwesome5, AntDesign } from '@expo/vector-icons';
 import Configuration from '../pages/Configuration';
-import Tasks from '../pages/Tasks/Tasks';
-import Category from '../pages/Category/Category';
-import Create from '../pages/Tasks/Create';
-import Edit from '../pages/Tasks/Edit';
+
+// Task CRUD
+import ViewTasks from '../pages/Task/ViewTasks';
+import CreateTask from '../pages/Task/CreateTask';
+import EditTask from '../pages/Task/EditTask';
+
+// Category CRUD
+import ViewCategories from '../pages/Category/ViewCategories';
 import CreateCategory from '../pages/Category/CreateCategory';
+import EditCategory from '../pages/Category/EditCategory';
+
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,8 +40,8 @@ function MainTabNavigator() {
         }}
       />
       <Tab.Screen
-        name="Tasks"
-        component={Tasks}
+        name="ViewTasks"
+        component={ViewTasks}
         options={{
           headerShown: false,
           tabBarLabel: '',
@@ -45,8 +51,8 @@ function MainTabNavigator() {
         }}
       />
       <Tab.Screen
-        name="Categorys"
-        component={Category}
+        name="ViewCategories"
+        component={ViewCategories}
         options={{
           headerShown: false,
           tabBarLabel: '',
@@ -70,16 +76,20 @@ function MainNavigator() {
         }}
       />
       <Stack.Screen
-        name="Create"
-        component={Create}
+        name="CreateTask"
+        component={CreateTask}
       />
       <Stack.Screen
-        name="Edit"
-        component={Edit}
+        name="EditTask"
+        component={EditTask}
       />
       <Stack.Screen
         name="CreateCategory"
         component={CreateCategory}
+      />
+        <Stack.Screen
+        name="EditCategory"
+        component={EditCategory}
       />
     </Stack.Navigator>
   );

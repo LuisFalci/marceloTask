@@ -6,12 +6,12 @@ db.transaction((tx) => {
   //<<<<<<<<<<<<<<<<<<<<<<<< USE ISSO APENAS DURANTE OS TESTES!!! >>>>>>>>>>>>>>>>>>>>>>>
 
   tx.executeSql(
-      "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL);"
+    "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL);"
   );
 });
 
 // Função para buscar usuários 
-export const getUser = () => {
+export const getUsers = () => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       //comando SQL modificável
@@ -24,10 +24,10 @@ export const getUser = () => {
       );
     });
   });
-  }
+}
 
 // Função para criar um novo usuário
-const create = (name) => {
+const createUser = (name) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
@@ -45,7 +45,7 @@ const create = (name) => {
 }
 
 // Função para atualizar os dados de um usuário existente
-const update = (userId, name) => {
+const updateUser = (userId, name) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
@@ -81,10 +81,10 @@ const deleteAllUsers = () => {
 }
 
 const actions = {
-    create,
-    update,
-    getUser,
-    deleteAllUsers,
+  createUser,
+  updateUser,
+  getUsers,
+  deleteAllUsers,
 }
 
 export default actions;

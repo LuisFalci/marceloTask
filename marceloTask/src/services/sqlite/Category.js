@@ -8,7 +8,7 @@ db.transaction((tx) => {
   );
 });
 
-const create = ({ id, title }) => {
+const createCategory = ({ id, title }) => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
@@ -24,7 +24,7 @@ const create = ({ id, title }) => {
   });
 };
 
-const all = () => {
+const getCategories = () => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
@@ -37,7 +37,7 @@ const all = () => {
   });
 };
 
-const remove = (id) => {
+const deleteCategory = (id) => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
@@ -50,7 +50,7 @@ const remove = (id) => {
   });
 };
 
-const update = ({ id, title }) => {
+const updateCategory = ({ id, title }) => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
@@ -63,11 +63,11 @@ const update = ({ id, title }) => {
   });
 };
 
-const actionsCategory = {
-  create,
-  all,
-  remove,
-  update,
+const actions = {
+  createCategory,
+  getCategories,
+  deleteCategory,
+  updateCategory,
 };
 
-export default actionsCategory;
+export default actions;

@@ -35,7 +35,7 @@ export default function SignIn(props) {
     // Restante do código da função createUser
 
     try {
-      await actions.create(userName);
+      await actions.createUser(userName);
       console.log('Usuário registrado com sucesso!');
       props.updateUserRegistration(); // Chama a função de atualização em App após o registro do usuário
     } catch (error) {
