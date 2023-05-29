@@ -55,7 +55,7 @@ export default function EditTask(props) {
 
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity style={[styles.button, darkModeEnabled && styles.darkModeButton]} onPress={editTask}>
-                        <Text style={[styles.buttonText, darkModeEnabled && styles.darkModeButtonText]}>Editar task</Text>
+                        <Text style={[styles.buttonText, darkModeEnabled && styles.darkModeButtonText]}>Salvar</Text>
                     </TouchableOpacity>
                 </View>
             </View>

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import MainNavigator from './src/routes/MyTabs';
 import { StatusBar } from 'expo-status-bar';
-import SignIn from './src/pages/SingIn';
+import SignIn from './src/pages/SignIn';
 import actions from './src/services/sqlite/User';
 import { ThemeProvider } from './src/utils/ThemeProvider';
 

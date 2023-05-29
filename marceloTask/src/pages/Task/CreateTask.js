@@ -49,7 +49,7 @@ export default function CreateTask({ navigation }) {
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={[styles.button, darkModeEnabled && styles.darkModeButton]} onPress={createTask}>
-            <Text style={[styles.buttonText, darkModeEnabled && styles.darkModeButtonText]}>Criar task</Text>
+            <Text style={[styles.buttonText, darkModeEnabled && styles.darkModeButtonText]}>Salvar</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -11,12 +11,12 @@ export default function ViewCategory() {
     const [categories, setCategories] = useState([]);
 
     const handleCategoryDoubleClick = (category) => {
-        navigation.navigate('EditCategory', { category: category });
+        navigation.navigate('Editar Categoria', { category: category });
     };
 
     useEffect(() => {
         loadCategories();   
-      }, []);
+      }, [categories]);
 
     const loadCategories = () => {
         actions.getCategories()
@@ -55,7 +55,7 @@ export default function ViewCategory() {
                 )}
             </ScrollView>
 
-            <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('CreateCategory')}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('Criar Categoria')}>
                 <Ionicons name="add-circle" size={70} color="#1C6B3C" />
             </TouchableOpacity>
         </View>

@@ -76,19 +76,19 @@ function MainNavigator() {
         }}
       />
       <Stack.Screen
-        name="CreateTask"
+        name="Criar Tarefa"
         component={CreateTask}
       />
       <Stack.Screen
-        name="EditTask"
+        name="Editar Tarefa"
         component={EditTask}
       />
       <Stack.Screen
-        name="CreateCategory"
+        name="Criar Categoria"
         component={CreateCategory}
       />
         <Stack.Screen
-        name="EditCategory"
+        name="Editar Categoria"
         component={EditCategory}
       />
     </Stack.Navigator>

@@ -12,7 +12,7 @@ export default function ViewTasks() {
 
   useEffect(() => {
     loadTasks();
-  }, []);
+  }, [tasks]);
 
   const loadTasks = () => {
     actions
@@ -28,16 +28,15 @@ export default function ViewTasks() {
       .deleteTask(id)
       .then((response) => {
         setTasks(response)
-        loadTasks();
       })
       .catch((error) =>
         console.error(`Erro ao criar nova tarefa: ${error}`)
       );
 
   };
-  loadTasks()
+
   const handleTaskDoubleClick = (task) => {
-    navigation.navigate("EditTask", { task: task });
+    navigation.navigate("Editar Tarefa", { task: task });
   };
 
   return (
@@ -135,7 +134,7 @@ export default function ViewTasks() {
       </ScrollView>
       <TouchableOpacity
         style={styles.iconContainer}
-        onPress={() => navigation.navigate("CreateTask")}
+        onPress={() => navigation.navigate("Criar Tarefa")}
       >
         <Ionicons name="add-circle" size={70} color="#1C6B3C" />
       </TouchableOpacity>

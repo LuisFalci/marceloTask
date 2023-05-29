@@ -54,7 +54,7 @@ export default function EditCategory(props) {
 
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity style={[styles.button, darkModeEnabled && styles.darkModeButton]} onPress={editCategory}>
-                        <Text style={[styles.buttonText, darkModeEnabled && styles.darkModeButtonText]}>Editar category</Text>
+                        <Text style={[styles.buttonText, darkModeEnabled && styles.darkModeButtonText]}>Salvar</Text>
                     </TouchableOpacity>
                 </View>
             </View>
