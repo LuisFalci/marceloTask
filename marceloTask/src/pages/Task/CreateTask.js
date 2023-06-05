@@ -1,19 +1,35 @@
-
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Ionicons } from '@expo/vector-icons';
 import { Text, SafeAreaView, TouchableOpacity, TextInput, StyleSheet, View } from "react-native";
 import { ThemeContext } from '../../utils/ThemeProvider';
-
+import { Picker } from "@react-native-picker/picker";
 import actions from "../../services/sqlite/Task";
+import categoryActions from "../../services/sqlite/Category";
 
 export default function CreateTask({ navigation }) {
   const { darkModeEnabled } = useContext(ThemeContext);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tasks, setTasks] = useState([]);
- 
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [categories, setCategories] = useState([{ id: '', title: '' }]);
+  const [expirationDate, setExpirationDate] = useState("");
+  const [expirationTime, setExpirationTime] = useState("");
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  const loadCategories = () => {
+    categoryActions.getCategories()
+      .then((response) => {
+        const categoriesWithEmptyOption = [{ id: '', title: '' }, ...response];
+        setCategories(categoriesWithEmptyOption);
+      })
+      .catch((error) => console.error(`Erro ao criar nova categoria: ${error}`));
+  };
+
   const createTask = () => {
-    console.log("aq")
     actions.createTask({ title: title, description: description, duration: '2022-03-28' })
       .then((id) => console.log(`Nova tarefa criada com o ID ${id}`))
       .catch((error) => console.error(`Erro ao criar nova tarefa: ${error}`));
@@ -24,6 +40,8 @@ export default function CreateTask({ navigation }) {
       .then((response) => setTasks(response))
       .catch((error) => console.error(`Erro ao criar nova tarefa: ${error}`));
   };
+
+  console.log(categoryActions.getCategories());
 
   return (
     <SafeAreaView style={[styles.container, darkModeEnabled && styles.darkModeContainer]}>
@@ -46,7 +64,42 @@ export default function CreateTask({ navigation }) {
             onChangeText={setDescription}
           />
         </View>
-
+        <Text style={[styles.label, darkModeEnabled && styles.darkModeLabel]}>Categoria</Text>
+        <View style={styles.inputContainer}>
+          <Picker
+            selectedValue={selectedCategory}
+            style={[styles.input, darkModeEnabled && styles.darkModeInput]}
+            onValueChange={(itemValue) => setSelectedCategory(itemValue)}
+          >
+            {categories.map((category) => (
+              <Picker.Item key={category.id} label={category.title} value={category.title} />
+            ))}
+          </Picker>
+        </View>
+        <View style={styles.expirationContainer}>
+          <Text style={[styles.expirationText, darkModeEnabled && styles.darkModeExpirationText]}>Expira em:</Text>
+          <View style={styles.datetimeContainer}>
+            <View style={styles.datetimeInputContainer}>
+              <Text style={styles.datetimeInputLabel}>Data:</Text>
+              <TextInput
+                placeholderTextColor={darkModeEnabled ? "#F0F0F0" : "#000000"}
+                style={[styles.datetimeInput, darkModeEnabled && styles.darkModeDatetimeInput]}
+                value={expirationDate}
+                onChangeText={setExpirationDate}
+              />
+            </View>
+            <Text style={styles.datetimeSeparator}></Text>
+            <View style={styles.datetimeInputContainer}>
+              <Text style={styles.datetimeInputLabel}>Hora:</Text>
+              <TextInput
+                placeholderTextColor={darkModeEnabled ? "#F0F0F0" : "#000000"}
+                style={[styles.datetimeInput, darkModeEnabled && styles.darkModeDatetimeInput]}
+                value={expirationTime}
+                onChangeText={setExpirationTime}
+              />
+            </View>
+          </View>
+        </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={[styles.button, darkModeEnabled && styles.darkModeButton]} onPress={createTask}>
             <Text style={[styles.buttonText, darkModeEnabled && styles.darkModeButtonText]}>Salvar</Text>
@@ -54,8 +107,7 @@ export default function CreateTask({ navigation }) {
         </View>
       </View>
     </SafeAreaView>
-
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -94,6 +146,50 @@ const styles = StyleSheet.create({
   darkModeInput: {
     backgroundColor: '#333',
     color: '#fff',
+  },
+  expirationContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  expirationText: {
+    fontSize: 16,
+    color: '#000',
+  },
+  darkModeExpirationText: {
+    color: '#fff',
+  },
+    datetimeContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 10,
+      marginHorizontal: 20,
+      marginBottom: 20,
+      borderWidth: 1, // Largura da borda
+      borderColor: 'black', // Cor da borda
+      padding: 30 , // Espaçamento interno do container (opcional)
+    },
+  datetimeInputContainer: {
+    flex: 1,
+  },
+  datetimeInputLabel: {
+    fontSize: 14,
+    color: '#000',
+    marginBottom: 5,
+  },
+  datetimeInput: {
+    backgroundColor: '#D9D9D9',
+    borderRadius: 10,
+    padding: 10,
+    color: '#000',
+  },
+  darkModeDatetimeInput: {
+    backgroundColor: '#333',
+    color: '#fff',
+  },
+  datetimeSeparator: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    width: 20
   },
   buttonContainer: {
     alignItems: 'center',

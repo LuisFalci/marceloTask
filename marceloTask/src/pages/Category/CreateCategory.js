@@ -4,8 +4,8 @@ import { ThemeContext } from '../../utils/ThemeProvider';
 import * as DocumentPicker from "expo-document-picker";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-
-import actions from "../../services/sqlite/Category";
+import * as FileSystem from "expo-file-system";
+import categoryActions from "../../services/sqlite/Category";
 
 export default function CreateCategory({ navigation }) {
   const { darkModeEnabled } = useContext(ThemeContext);
@@ -14,16 +14,17 @@ export default function CreateCategory({ navigation }) {
   const [time, setTime] = useState(new Date());
   const [selectedIcon, setSelectedIcon] = useState("");
   const [isDateTimePickerVisible, setDateTimePickerVisible] = useState(false);
+  const [showTime, setShowTime] = useState("");
+  const [notificationSound, setNotificationSound] = useState("");
 
   const iconOptions = [
-    { label: "Ícone 1", value: "icon1" },
-    { label: "Ícone 2", value: "icon2" },
-    { label: "Ícone 3", value: "icon3" },
-    // Adicione mais opções de ícones conforme necessário
+    { label: "Trabalho", value: "icon1" },
+    { label: "Estudo", value: "icon2" },
+    { label: "Saúde", value: "icon3" },
   ];
-
+console.log(selectedIcon)
   const createCategory = () => {
-    actions.createCategory({ title: title })
+    categoryActions.createCategory({ title: title, notificationSound: notificationSound, icon: selectedIcon, hour: showTime })
       .then((id) => console.log(`Nova tarefa criada com o ID ${id}`))
       .catch((error) => console.error(`Erro ao criar nova tarefa: ${error}`));
   };
@@ -33,6 +34,7 @@ export default function CreateCategory({ navigation }) {
       const soundResult = await DocumentPicker.getDocumentAsync({ type: "audio/*" });
       if (!soundResult.cancelled) {
         setSound(soundResult.uri);
+        setNotificationSound(soundResult.name); // Define apenas o nome do arquivo
       }
     } catch (error) {
       console.error("Erro ao selecionar som da notificação:", error);
@@ -47,8 +49,9 @@ export default function CreateCategory({ navigation }) {
     setDateTimePickerVisible(false);
   };
 
-  const handleDateTimeConfirm = (selectedDate) => {
+  const handleDateTimeConfirm = async (selectedDate) => {
     setTime(selectedDate);
+    setShowTime(selectedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
     hideDateTimePicker();
   };
 
@@ -72,8 +75,8 @@ export default function CreateCategory({ navigation }) {
             onPress={handleSelectSound}
           >
             <Text style={[styles.fileInputText, darkModeEnabled && styles.darkModeFileInputText]}>
-              {/* {soundName} */}
-            </Text>
+              {notificationSound}
+            </Text> 
           </TouchableOpacity>
           {sound && <Text style={[styles.fieldText, darkModeEnabled && styles.darkModeFieldText]}>{sound}</Text>}
         </View>
@@ -95,7 +98,7 @@ export default function CreateCategory({ navigation }) {
         <Text style={[styles.label, darkModeEnabled && styles.darkModeLabel]}>Hora</Text>
         <TouchableOpacity style={styles.inputContainer} onPress={showDateTimePicker}>
           <Text style={[styles.input, darkModeEnabled && styles.darkModeInput]}>
-            {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            {showTime}
           </Text>
         </TouchableOpacity>
         <DateTimePickerModal
@@ -146,8 +149,9 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: '#D9D9D9',
-    padding: 10,
+    padding: 15,
     color: '#000',
+    paddingBottom: 10
   },
   darkModeInput: {
     backgroundColor: '#333',
@@ -214,3 +218,4 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
+  

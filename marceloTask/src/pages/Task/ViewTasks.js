@@ -103,13 +103,9 @@ export default function ViewTasks() {
                     {task.description}
                   </Text>
                   <View style={styles.taskDetailsContainer}>
-                    <Text style={styles.taskDetailText}>
-                      Início: {task.createdAt}
-                      </Text>
                       <Text style={styles.taskDetailText}>
-                        Término: {task.duration}
+                        Término: {task.duration} | 18:30  
                       </Text>
-                    
                   </View>
                 </View>
                 <View style={styles.buttonsContainer}>

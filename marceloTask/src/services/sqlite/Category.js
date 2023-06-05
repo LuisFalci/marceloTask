@@ -4,19 +4,20 @@ db.transaction((tx) => {
   // tx.executeSql("DROP TABLE categories;");
 
   tx.executeSql(
-    "CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL);"
+    "CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, notificationSound TEXT, icon TEXT, hour TEXT);"
   );
 });
 
-const createCategory = ({ id, title }) => {
+const createCategory = (obj) => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
+      console.log(obj)
       tx.executeSql(
-        "INSERT INTO categories (id, title) VALUES (?, ?);",
-        [id, title],
+        "INSERT INTO categories (title, notificationSound, icon, hour) VALUES (?, ?, ?, ?);",
+        [obj.title, obj.notificationSound, obj.icon, obj.hour],
         (_, { rowsAffected, insertId }) => {
           if (rowsAffected > 0) resolve(insertId);
-          else reject("Error inserting object: " + JSON.stringify({ id, title }));
+          else reject("Error inserting object: " + JSON.stringify(obj));
         },
         (_, error) => reject(error)
       );
@@ -50,12 +51,13 @@ const deleteCategory = (id) => {
   });
 };
 
-const updateCategory = ({ id, title }) => {
+const updateCategory = ({ id, title, notificationSound, icon, hour }) => {
+  console.log(id, title, notificationSound, icon, hour)
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        "UPDATE categories SET title = ? WHERE id = ?;",
-        [title, id],
+        "UPDATE categories SET title = ?, notificationSound = ?, icon = ?, hour = ? WHERE id = ?;",
+        [title, notificationSound, icon, hour, id],
         (_, { rowsAffected }) => resolve(rowsAffected),
         (_, error) => reject(error)
       );
@@ -63,11 +65,11 @@ const updateCategory = ({ id, title }) => {
   });
 };
 
-const actions = {
+const categoryActions = {
   createCategory,
   getCategories,
   deleteCategory,
   updateCategory,
 };
 
-export default actions;
+export default categoryActions ;

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-nati
 import { Ionicons } from '@expo/vector-icons';
 import { ThemeContext } from '../../utils/ThemeProvider';
 import { useNavigation } from '@react-navigation/native';
-import actions from "../../services/sqlite/Category";
+import categoryActions from "../../services/sqlite/Category";
 
 export default function ViewCategory() {
     const navigation = useNavigation();
@@ -19,25 +19,24 @@ export default function ViewCategory() {
       }, [categories]);
 
     const loadCategories = () => {
-        actions.getCategories()
+        categoryActions.getCategories()
             .then((response) => setCategories(response))
             .catch((error) => console.error(`Erro ao criar nova categoria: ${error}`));
     };
     
     const deleteCategory = (id) => {
-        actions.deleteCategory(id)
+        categoryActions.deleteCategory(id)
             .then((response) => setCategories(response))
             .catch((error) => console.error(`Erro ao criar nova categoria: ${error}`));
 
     }
-
+    
     return (
         <View style={[styles.container, darkModeEnabled && styles.darkModeContainer]}>
             <View style={[styles.titleContainer, darkModeEnabled && styles.darkModeTitleContainer]}>
                 <Text style={[styles.title, darkModeEnabled && styles.darkModeTitle]}>Minhas Categorias</Text>
             </View>
             <ScrollView>
-                {/* Containers de tarefa */}
                 {categories && categories.length > 0 ? (
                     categories.map((category) => (
                         <TouchableOpacity onPress={() => handleCategoryDoubleClick(category)} key={category.id}>
@@ -45,7 +44,6 @@ export default function ViewCategory() {
                                 <Text style={[styles.categoryText, darkModeEnabled && styles.darkModecategoryText]}>{category.title}</Text>
                                 <View style={styles.buttonsContainer}>
                                     <Ionicons name="close-circle" size={50} color="#FF0000" onPress={() => deleteCategory(category.id)} />
-                                    <Ionicons name="checkmark-circle" size={50} color="#30BB3D" />
                                 </View>
                             </View>
                         </TouchableOpacity>
