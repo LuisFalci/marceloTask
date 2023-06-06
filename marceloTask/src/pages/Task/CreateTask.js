@@ -2,9 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { Ionicons } from '@expo/vector-icons';
 import { Text, SafeAreaView, TouchableOpacity, TextInput, StyleSheet, View } from "react-native";
 import { ThemeContext } from '../../utils/ThemeProvider';
-import { Picker } from "@react-native-picker/picker";
 import actions from "../../services/sqlite/Task";
 import categoryActions from "../../services/sqlite/Category";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Picker } from "@react-native-picker/picker";
 
 export default function CreateTask({ navigation }) {
   const { darkModeEnabled } = useContext(ThemeContext);
@@ -13,8 +14,10 @@ export default function CreateTask({ navigation }) {
   const [tasks, setTasks] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([{ id: '', title: '' }]);
-  const [expirationDate, setExpirationDate] = useState("");
-  const [expirationTime, setExpirationTime] = useState("");
+  const [selectedDate, setSelectedDate] = useState(new Date()); // Alterado para o formato Date
+  const [showDateTimePicker, setShowDateTimePicker] = useState(false);
+  const [selectedTime, setSelectedTime] = useState(new Date()); // Alterado para o formato Date
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   useEffect(() => {
     loadCategories();
@@ -30,19 +33,19 @@ export default function CreateTask({ navigation }) {
   };
 
   const createTask = () => {
-    actions.createTask({ title: title, description: description, duration: '2022-03-28' })
+    const task = {
+      title: title,
+      description: description,
+      date: selectedDate.toLocaleDateString('pt-BR'),
+      time: selectedTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+      category: selectedCategory
+    };
+  
+    actions.createTask(task)
       .then((id) => console.log(`Nova tarefa criada com o ID ${id}`))
       .catch((error) => console.error(`Erro ao criar nova tarefa: ${error}`));
   };
-
-  const getTasks = () => {
-    actions.getUsers()
-      .then((response) => setTasks(response))
-      .catch((error) => console.error(`Erro ao criar nova tarefa: ${error}`));
-  };
-
-  console.log(categoryActions.getCategories());
-
+  
   return (
     <SafeAreaView style={[styles.container, darkModeEnabled && styles.darkModeContainer]}>
       <View style={[styles.containerMargin, darkModeEnabled && styles.darkModeContainerMargin]}>
@@ -72,7 +75,7 @@ export default function CreateTask({ navigation }) {
             onValueChange={(itemValue) => setSelectedCategory(itemValue)}
           >
             {categories.map((category) => (
-              <Picker.Item key={category.id} label={category.title} value={category.title} />
+              <Picker.Item key={category.id} label={category.title} value={category.id} />
             ))}
           </Picker>
         </View>
@@ -81,22 +84,50 @@ export default function CreateTask({ navigation }) {
           <View style={styles.datetimeContainer}>
             <View style={styles.datetimeInputContainer}>
               <Text style={styles.datetimeInputLabel}>Data:</Text>
-              <TextInput
-                placeholderTextColor={darkModeEnabled ? "#F0F0F0" : "#000000"}
-                style={[styles.datetimeInput, darkModeEnabled && styles.darkModeDatetimeInput]}
-                value={expirationDate}
-                onChangeText={setExpirationDate}
-              />
+              <TouchableOpacity
+                style={[styles.datetimeButton, darkModeEnabled && styles.darkModeDatetimeButton]}
+                onPress={() => setShowDateTimePicker(true)}
+              >
+                <Text style={styles.datetimeButtonText}>
+                  {selectedDate.toLocaleDateString('pt-BR')}
+                </Text>
+              </TouchableOpacity>
+              {showDateTimePicker && (
+                <DateTimePicker
+                  value={selectedDate}
+                  mode="date"
+                  display="default"
+                  onChange={(event, selected) => {
+                    const currentDate = selected || selectedDate;
+                    setShowDateTimePicker(false);
+                    setSelectedDate(currentDate);
+                  }}
+                />
+              )}
             </View>
             <Text style={styles.datetimeSeparator}></Text>
             <View style={styles.datetimeInputContainer}>
               <Text style={styles.datetimeInputLabel}>Hora:</Text>
-              <TextInput
-                placeholderTextColor={darkModeEnabled ? "#F0F0F0" : "#000000"}
-                style={[styles.datetimeInput, darkModeEnabled && styles.darkModeDatetimeInput]}
-                value={expirationTime}
-                onChangeText={setExpirationTime}
-              />
+              <TouchableOpacity
+                style={[styles.datetimeButton, darkModeEnabled && styles.darkModeDatetimeButton]}
+                onPress={() => setShowTimePicker(true)}
+              >
+                <Text style={styles.datetimeButtonText}>
+                  {selectedTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                </Text>
+              </TouchableOpacity>
+              {showTimePicker && (
+                <DateTimePicker
+                  value={selectedTime}
+                  mode="time"
+                  display="default"
+                  onChange={(event, selected) => {
+                    const currentTime = selected || selectedTime;
+                    setShowTimePicker(false);
+                    setSelectedTime(currentTime);
+                  }}
+                />
+              )}
             </View>
           </View>
         </View>
@@ -158,16 +189,16 @@ const styles = StyleSheet.create({
   darkModeExpirationText: {
     color: '#fff',
   },
-    datetimeContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginTop: 10,
-      marginHorizontal: 20,
-      marginBottom: 20,
-      borderWidth: 1, // Largura da borda
-      borderColor: 'black', // Cor da borda
-      padding: 30 , // Espaçamento interno do container (opcional)
-    },
+  datetimeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+    marginHorizontal: 20,
+    marginBottom: 20,
+    borderWidth: 1, // Largura da borda
+    borderColor: 'black', // Cor da borda
+    padding: 30, // Espaçamento interno do container (opcional)
+  },
   datetimeInputContainer: {
     flex: 1,
   },
@@ -212,6 +243,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   darkModeButtonText: {
+    color: '#fff',
+  },
+  datetimeButton: {
+    backgroundColor: '#D9D9D9',
+    borderRadius: 10,
+    padding: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  darkModeDatetimeButton: {
+    backgroundColor: '#555',
+  },
+  datetimeButtonText: {
+    color: '#000',
+    marginLeft: 5,
+  },
+  darkModeDatetimeButtonText: {
     color: '#fff',
   },
 });

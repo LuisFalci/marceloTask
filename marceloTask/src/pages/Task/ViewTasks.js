@@ -16,12 +16,13 @@ export default function ViewTasks() {
 
   const loadTasks = () => {
     actions
-      .getUsers()
+      .getTasks()
       .then((response) => setTasks(response))
       .catch((error) =>
         console.error(`Erro ao criar nova tarefa: ${error}`)
       );
   };
+  // console.log(actions.getTasks())
 
   const deleteTask = (id) => {
     actions
@@ -103,9 +104,9 @@ export default function ViewTasks() {
                     {task.description}
                   </Text>
                   <View style={styles.taskDetailsContainer}>
-                      <Text style={styles.taskDetailText}>
-                        Término: {task.duration} | 18:30  
-                      </Text>
+                    <Text style={styles.taskDetailText}>
+                      Término: {task.date} | {task.time}
+                    </Text>
                   </View>
                 </View>
                 <View style={styles.buttonsContainer}>

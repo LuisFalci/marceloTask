@@ -22,7 +22,7 @@ export default function CreateCategory({ navigation }) {
     { label: "Estudo", value: "icon2" },
     { label: "Saúde", value: "icon3" },
   ];
-console.log(selectedIcon)
+
   const createCategory = () => {
     categoryActions.createCategory({ title: title, notificationSound: notificationSound, icon: selectedIcon, hour: showTime })
       .then((id) => console.log(`Nova tarefa criada com o ID ${id}`))
