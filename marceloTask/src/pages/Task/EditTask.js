@@ -6,6 +6,7 @@ import actions from "../../services/sqlite/Task";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from "@react-native-picker/picker";
 import categoryActions from "../../services/sqlite/Category";
+import { format } from "date-fns";
 
 export default function EditTask(props) {
   const { route } = props;
@@ -17,28 +18,36 @@ export default function EditTask(props) {
   const [categories, setCategories] = useState([{ id: '', title: '' }]);
   const [showDateTimePicker, setShowDateTimePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedTime, setSelectedTime] = useState(null);
-  const [taskDate, setTaskDate] = useState(task.date);
-  const [taskTime, setTaskTime] = useState(task.time);
+  const [selectedDate, setSelectedDate] = useState(new Date(task.date));
+  const [selectedTime, setSelectedTime] = useState(new Date(task.time));
+  // const [taskDate, setTaskDate] = useState(task.date);
+  // const [taskTime, setTaskTime] = useState(task.time);
   const [taskId, setTaskId] = useState(task.id);
+console.log(selectedDate)
 
   const editTask = async () => {
-    if(selectedDate != null){
-      let newData = await selectedDate.toLocaleDateString('pt-BR');
-      setTaskDate(newData)
-    }
-    if(selectedTime != null){
-      let newTime = await selectedTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-      setTaskTime(newTime)
-    }
-
+    const task = {
+      id: taskId,
+      title: title,
+      description: description,
+      date: selectedDate.toISOString(),
+      time: selectedTime.toISOString(),
+      category: selectedCategory
+    };
+    console.log(task)
     actions.updateTask(task)
       .then((id) => {
         console.log(`Tarefa editada com o ID ${id}`)
       })
       .catch((error) => console.error(`Erro ao editar tarefa: ${error}`));
   };
+
+  const convertDate = () => {
+
+  }
+  const convertTime = () => {
+
+  }
 
   useEffect(() => {
     loadCategories();
@@ -47,8 +56,7 @@ export default function EditTask(props) {
   const loadCategories = () => {
     categoryActions.getCategories()
       .then((response) => {
-        const categoriesWithEmptyOption = [...response];
-        setCategories(categoriesWithEmptyOption);
+        setCategories(response);
       })
       .catch((error) => console.error(`Erro ao criar nova categoria: ${error}`));
   };
@@ -82,7 +90,7 @@ export default function EditTask(props) {
             onValueChange={(itemValue) => setSelectedCategory(itemValue)}
           >
             {categories.map((category) => (
-              <Picker.Item key={category.id} label={category.title} value={category.id} />
+              <Picker.Item key={category.id} label={category.title} value={category.title} />
             ))}
           </Picker>
         </View>
@@ -96,7 +104,7 @@ export default function EditTask(props) {
                 onPress={() => setShowDateTimePicker(true)}
               >
                 <Text style={styles.datetimeButtonText}>
-                {selectedDate == null ? taskDate : selectedDate.toLocaleDateString('pt-BR')}
+                {selectedDate.toLocaleDateString('pt-BR')}
                 </Text>
               </TouchableOpacity>
               {showDateTimePicker && (
@@ -120,7 +128,7 @@ export default function EditTask(props) {
                 onPress={() => setShowTimePicker(true)}
               >
                 <Text style={styles.datetimeButtonText}>
-                {selectedTime == null ? taskTime : selectedTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                {selectedTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                 </Text>
               </TouchableOpacity>
               {showTimePicker && (

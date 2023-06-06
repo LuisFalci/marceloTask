@@ -36,10 +36,11 @@ export default function CreateTask({ navigation }) {
     const task = {
       title: title,
       description: description,
-      date: selectedDate.toLocaleDateString('pt-BR'),
-      time: selectedTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+      date: selectedDate.toISOString(),
+      time: selectedTime.toISOString(),
       category: selectedCategory
     };
+    console.log(task)
   
     actions.createTask(task)
       .then((id) => console.log(`Nova tarefa criada com o ID ${id}`))
