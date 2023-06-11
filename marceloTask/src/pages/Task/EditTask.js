@@ -1,12 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Ionicons } from '@expo/vector-icons';
 import { Text, SafeAreaView, TouchableOpacity, TextInput, StyleSheet, View } from "react-native";
 import { ThemeContext } from '../../utils/ThemeProvider';
 import actions from "../../services/sqlite/Task";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from "@react-native-picker/picker";
 import categoryActions from "../../services/sqlite/Category";
-import { format } from "date-fns";
 
 export default function EditTask(props) {
   const { route } = props;
@@ -20,8 +18,6 @@ export default function EditTask(props) {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date(task.date));
   const [selectedTime, setSelectedTime] = useState(new Date(task.time));
-  // const [taskDate, setTaskDate] = useState(task.date);
-  // const [taskTime, setTaskTime] = useState(task.time);
   const [taskId, setTaskId] = useState(task.id);
 console.log(selectedDate)
 

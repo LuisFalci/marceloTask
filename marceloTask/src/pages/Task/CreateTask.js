@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Ionicons } from '@expo/vector-icons';
 import { Text, SafeAreaView, TouchableOpacity, TextInput, StyleSheet, View } from "react-native";
 import { ThemeContext } from '../../utils/ThemeProvider';
 import actions from "../../services/sqlite/Task";
@@ -11,7 +10,6 @@ export default function CreateTask({ navigation }) {
   const { darkModeEnabled } = useContext(ThemeContext);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [tasks, setTasks] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([{ id: '', title: '' }]);
   const [selectedDate, setSelectedDate] = useState(new Date()); // Alterado para o formato Date
@@ -84,6 +82,7 @@ export default function CreateTask({ navigation }) {
           <Text style={[styles.expirationText, darkModeEnabled && styles.darkModeExpirationText]}>Expira em:</Text>
           <View style={styles.datetimeContainer}>
             <View style={styles.datetimeInputContainer}>
+               {/* Inserir Data */}
               <Text style={styles.datetimeInputLabel}>Data:</Text>
               <TouchableOpacity
                 style={[styles.datetimeButton, darkModeEnabled && styles.darkModeDatetimeButton]}
@@ -108,6 +107,7 @@ export default function CreateTask({ navigation }) {
             </View>
             <Text style={styles.datetimeSeparator}></Text>
             <View style={styles.datetimeInputContainer}>
+              {/* Inserir Horas */}
               <Text style={styles.datetimeInputLabel}>Hora:</Text>
               <TouchableOpacity
                 style={[styles.datetimeButton, darkModeEnabled && styles.darkModeDatetimeButton]}

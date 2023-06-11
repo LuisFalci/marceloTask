@@ -55,7 +55,6 @@ const deleteTask = (id) => {
 };
 
 const updateTask = (obj) => {
-    // Obtenha o timestamp atual
     const updatedAt = Date.now().toString();
 
     return new Promise((resolve, reject) => {
