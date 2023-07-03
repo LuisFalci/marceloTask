@@ -5,6 +5,7 @@ import actions from "../../services/sqlite/Task";
 import categoryActions from "../../services/sqlite/Category";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from "@react-native-picker/picker";
+import * as Notify from 'expo-notifications';
 
 export default function CreateTask({ navigation }) {
   const { darkModeEnabled } = useContext(ThemeContext);
@@ -16,6 +17,14 @@ export default function CreateTask({ navigation }) {
   const [showDateTimePicker, setShowDateTimePicker] = useState(false);
   const [selectedTime, setSelectedTime] = useState(new Date()); // Alterado para o formato Date
   const [showTimePicker, setShowTimePicker] = useState(false);
+
+  Notify.setNotificationHandler({
+    handleNotification: async () => ({  
+      shouldPlaySound: true,
+      shouldShowAlert: true,
+      shouldSetBadge: true,
+    }),
+  });
 
   useEffect(() => {
     loadCategories();
@@ -30,7 +39,7 @@ export default function CreateTask({ navigation }) {
       .catch((error) => console.error(`Erro ao criar nova categoria: ${error}`));
   };
 
-  const createTask = () => {
+  const createTask = async () => {
     const task = {
       title: title,
       description: description,
@@ -38,12 +47,46 @@ export default function CreateTask({ navigation }) {
       time: selectedTime.toISOString(),
       category: selectedCategory
     };
-    console.log(task)
+    let seconds = calculateSeconds(task.date, task.time);
+    console.log(seconds)
+
+    const schedulingOptions = {
+      content: {
+        title: `Realizar Tarefa: ${task.title}`,
+        body: `Descrição: ${task.description}`,
+        data: [],
+      },
+      trigger: {
+        seconds,
+      },
+    };
+    
+    const notificationId = await Notify.scheduleNotificationAsync(schedulingOptions);
+    task.notificationId = notificationId; // Store the notification ID
   
     actions.createTask(task)
       .then((id) => console.log(`Nova tarefa criada com o ID ${id}`))
       .catch((error) => console.error(`Erro ao criar nova tarefa: ${error}`));
   };
+
+  function calculateSeconds(dateString, timeString) {
+    // combine the date from dateString and the time from timeString
+    let notifyDate = new Date(dateString);
+    let notifyTime = new Date(timeString);
+  
+    notifyDate.setHours(notifyTime.getHours(), notifyTime.getMinutes(), notifyTime.getSeconds());
+  
+    // get the current date and time
+    let currentDate = new Date(timeString);
+    let currentTime = new Date(dateString);
+    
+    currentDate.setHours(currentTime.getHours(), currentTime.getMinutes(), currentTime.getSeconds());
+  
+    // calculate the difference in seconds
+    let differenceInSeconds = (notifyDate.getTime() - currentDate.getTime()) / 1000;
+  
+    return differenceInSeconds;
+  }
   
   return (
     <SafeAreaView style={[styles.container, darkModeEnabled && styles.darkModeContainer]}>

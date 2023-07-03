@@ -5,6 +5,7 @@ import actions from "../../services/sqlite/Task";
 import { useNavigation } from '@react-navigation/native';
 import { ThemeContext } from '../../utils/ThemeProvider';
 import { format } from "date-fns";
+import * as Notifications from 'expo-notifications';
 
 export default function ViewTasks() {
   const navigation = useNavigation();
@@ -17,7 +18,7 @@ export default function ViewTasks() {
   }, [searchQuery]);
 
   useEffect(() => {
-    loadTasks();   
+    loadTasks();  
   }, [tasks]);
 
   const loadTasks = (query = "") => {
@@ -29,9 +30,11 @@ export default function ViewTasks() {
       );
   };
 
-  const deleteTask = (id) => {
+  const deleteTask = async (task) => {
+    await Notifications.cancelScheduledNotificationAsync(task.notificationId);
+
     actions
-      .deleteTask(id)
+      .deleteTask(task.id)
       .then((response) => {
         setTasks(response)
       })
@@ -125,7 +128,7 @@ export default function ViewTasks() {
                       name="close-circle"
                       size={50}
                       color="#FF0000"
-                      onPress={() => deleteTask(task.id)}
+                      onPress={() => deleteTask(task)}
                     />
                     <Ionicons
                       name="checkmark-circle"

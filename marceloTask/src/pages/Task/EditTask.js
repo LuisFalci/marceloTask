@@ -5,6 +5,8 @@ import actions from "../../services/sqlite/Task";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from "@react-native-picker/picker";
 import categoryActions from "../../services/sqlite/Category";
+import * as Notifications from 'expo-notifications';
+import * as Notify from 'expo-notifications';
 
 export default function EditTask(props) {
   const { route } = props;
@@ -19,10 +21,13 @@ export default function EditTask(props) {
   const [selectedDate, setSelectedDate] = useState(new Date(task.date));
   const [selectedTime, setSelectedTime] = useState(new Date(task.time));
   const [taskId, setTaskId] = useState(task.id);
-console.log(selectedDate)
+  const [notificationId, setNotificationId] = useState(task.notificationId);
 
   const editTask = async () => {
-    const task = {
+   
+    await Notifications.cancelScheduledNotificationAsync(notificationId);
+
+    const editedTask = {
       id: taskId,
       title: title,
       description: description,
@@ -30,19 +35,47 @@ console.log(selectedDate)
       time: selectedTime.toISOString(),
       category: selectedCategory
     };
-    console.log(task)
-    actions.updateTask(task)
+    let seconds = calculateSeconds(editedTask.date, editedTask.time);
+    console.log(seconds)
+
+    const schedulingOptions = {
+      content: {
+        title: `Realizar Tarefa: ${editedTask.title}`,
+        body: `Descrição: ${editedTask.description}`,
+        data: [],
+      },
+      trigger: {
+        seconds,
+      },
+    };
+
+    const newNotificationId = await Notify.scheduleNotificationAsync(schedulingOptions);
+    editedTask.notificationId = newNotificationId; // Store the notification ID
+
+    actions.updateTask(editedTask)
       .then((id) => {
         console.log(`Tarefa editada com o ID ${id}`)
       })
       .catch((error) => console.error(`Erro ao editar tarefa: ${error}`));
   };
 
-  const convertDate = () => {
-
-  }
-  const convertTime = () => {
-
+  function calculateSeconds(dateString, timeString) {
+    // combine the date from dateString and the time from timeString
+    let notifyDate = new Date(dateString);
+    let notifyTime = new Date(timeString);
+  
+    notifyDate.setHours(notifyTime.getHours(), notifyTime.getMinutes(), notifyTime.getSeconds());
+  
+    // get the current date and time
+    let currentDate = new Date(timeString);
+    let currentTime = new Date(dateString);
+    
+    currentDate.setHours(currentTime.getHours(), currentTime.getMinutes(), currentTime.getSeconds());
+  
+    // calculate the difference in seconds
+    let differenceInSeconds = (notifyDate.getTime() - currentDate.getTime()) / 1000;
+  
+    return differenceInSeconds;
   }
 
   useEffect(() => {
