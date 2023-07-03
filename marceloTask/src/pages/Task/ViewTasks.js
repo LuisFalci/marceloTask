@@ -16,6 +16,10 @@ export default function ViewTasks() {
     loadTasks(searchQuery);
   }, [searchQuery]);
 
+  useEffect(() => {
+    loadTasks();   
+  }, [tasks]);
+
   const loadTasks = (query = "") => {
     actions
       .getTasks(query)
