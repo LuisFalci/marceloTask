@@ -13,13 +13,14 @@ export default function CreateTask({ navigation }) {
   const [description, setDescription] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([{ id: '', title: '' }]);
-  const [selectedDate, setSelectedDate] = useState(new Date()); // Alterado para o formato Date
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDateTimePicker, setShowDateTimePicker] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(new Date()); // Alterado para o formato Date
+  const [selectedTime, setSelectedTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   Notify.setNotificationHandler({
-    handleNotification: async () => ({  
+    handleNotification: async () => ({
       shouldPlaySound: true,
       shouldShowAlert: true,
       shouldSetBadge: true,
@@ -40,6 +41,15 @@ export default function CreateTask({ navigation }) {
   };
 
   const createTask = async () => {
+    const currentDate = new Date();
+    const selectedDateTime = new Date(selectedDate);
+    selectedDateTime.setHours(selectedTime.getHours(), selectedTime.getMinutes(), selectedTime.getSeconds());
+
+    if (selectedDateTime < currentDate) {
+      setErrorMessage("A data e hora selecionadas já se passaram");
+      return;
+    }
+
     const task = {
       title: title,
       description: description,
@@ -47,8 +57,21 @@ export default function CreateTask({ navigation }) {
       time: selectedTime.toISOString(),
       category: selectedCategory
     };
-    let seconds = calculateSeconds(task.date, task.time);
+
+    // Find the selected category
+    const category = categories.find((cat) => cat.id === selectedCategory);
+    let advanceMinutes = 0;
+    if (category && category.minutes) {
+      advanceMinutes = category.minutes;
+    }
+
+    let seconds = calculateSeconds(task.date, task.time, advanceMinutes);
     console.log(seconds)
+
+    if (seconds < 0) {
+      setErrorMessage("A data e hora selecionadas já se passaram");
+      return;
+    }
 
     const schedulingOptions = {
       content: {
@@ -60,34 +83,32 @@ export default function CreateTask({ navigation }) {
         seconds,
       },
     };
-    
+
     const notificationId = await Notify.scheduleNotificationAsync(schedulingOptions);
-    task.notificationId = notificationId; // Store the notification ID
-  
+    task.notificationId = notificationId;
+
     actions.createTask(task)
       .then((id) => console.log(`Nova tarefa criada com o ID ${id}`))
       .catch((error) => console.error(`Erro ao criar nova tarefa: ${error}`));
+
+    setErrorMessage(""); // Clear error message
   };
 
-  function calculateSeconds(dateString, timeString) {
-    // combine the date from dateString and the time from timeString
+  function calculateSeconds(dateString, timeString, advanceMinutes = 0) {
     let notifyDate = new Date(dateString);
     let notifyTime = new Date(timeString);
-  
-    notifyDate.setHours(notifyTime.getHours(), notifyTime.getMinutes(), notifyTime.getSeconds());
-  
-    // get the current date and time
-    let currentDate = new Date(timeString);
-    let currentTime = new Date(dateString);
-    
+
+    notifyDate.setHours(notifyTime.getHours(), notifyTime.getMinutes() - advanceMinutes, notifyTime.getSeconds());
+
+    let currentDate = new Date();
+    let currentTime = new Date();
+
     currentDate.setHours(currentTime.getHours(), currentTime.getMinutes(), currentTime.getSeconds());
-  
-    // calculate the difference in seconds
+
     let differenceInSeconds = (notifyDate.getTime() - currentDate.getTime()) / 1000;
-  
     return differenceInSeconds;
   }
-  
+
   return (
     <SafeAreaView style={[styles.container, darkModeEnabled && styles.darkModeContainer]}>
       <View style={[styles.containerMargin, darkModeEnabled && styles.darkModeContainerMargin]}>
@@ -125,7 +146,7 @@ export default function CreateTask({ navigation }) {
           <Text style={[styles.expirationText, darkModeEnabled && styles.darkModeExpirationText]}>Expira em:</Text>
           <View style={styles.datetimeContainer}>
             <View style={styles.datetimeInputContainer}>
-               {/* Inserir Data */}
+              {/* Inserir Data */}
               <Text style={styles.datetimeInputLabel}>Data:</Text>
               <TouchableOpacity
                 style={[styles.datetimeButton, darkModeEnabled && styles.darkModeDatetimeButton]}
@@ -174,6 +195,7 @@ export default function CreateTask({ navigation }) {
               )}
             </View>
           </View>
+          <Text style={{ color: 'red' }}>{errorMessage}</Text>
         </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={[styles.button, darkModeEnabled && styles.darkModeButton]} onPress={createTask}>
@@ -268,7 +290,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     alignItems: 'center',
-    marginTop: 60,
+    marginTop: 10,
   },
   button: {
     backgroundColor: '#1C6B3C',

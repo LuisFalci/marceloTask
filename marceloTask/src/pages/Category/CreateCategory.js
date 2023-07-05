@@ -16,44 +16,45 @@ export default function CreateCategory({ navigation }) {
   const [isDateTimePickerVisible, setDateTimePickerVisible] = useState(false);
   const [showTime, setShowTime] = useState("");
   const [notificationSound, setNotificationSound] = useState("");
+  const [minutesInAdvance, setMinutesInAdvance] = useState(""); // Substitui a variável 'time'
 
-  const iconOptions = [
-    { label: "Trabalho", value: "icon1" },
-    { label: "Estudo", value: "icon2" },
-    { label: "Saúde", value: "icon3" },
-  ];
+  // const iconOptions = [
+  //   { label: "Trabalho", value: "icon1" },
+  //   { label: "Estudo", value: "icon2" },
+  //   { label: "Saúde", value: "icon3" },
+  // ];
 
   const createCategory = () => {
-    categoryActions.createCategory({ title: title, notificationSound: notificationSound, icon: selectedIcon, hour: showTime })
+    categoryActions.createCategory({ title: title, notificationSound: notificationSound, icon: selectedIcon, minutes: minutesInAdvance })
       .then((id) => console.log(`Nova tarefa criada com o ID ${id}`))
       .catch((error) => console.error(`Erro ao criar nova tarefa: ${error}`));
   };
 
-  const handleSelectSound = async () => {
-    try {
-      const soundResult = await DocumentPicker.getDocumentAsync({ type: "audio/*" });
-      if (!soundResult.cancelled) {
-        setSound(soundResult.uri);
-        setNotificationSound(soundResult.name); // Define apenas o nome do arquivo
-      }
-    } catch (error) {
-      console.error("Erro ao selecionar som da notificação:", error);
-    }
-  };
+  // const handleSelectSound = async () => {
+  //   try {
+  //     const soundResult = await DocumentPicker.getDocumentAsync({ type: "audio/*" });
+  //     if (!soundResult.cancelled) {
+  //       setSound(soundResult.uri);
+  //       setNotificationSound(soundResult.name); // Define apenas o nome do arquivo
+  //     }
+  //   } catch (error) {
+  //     console.error("Erro ao selecionar som da notificação:", error);
+  //   }
+  // };
 
-  const showDateTimePicker = () => {
-    setDateTimePickerVisible(true);
-  };
+  // const showDateTimePicker = () => {
+  //   setDateTimePickerVisible(true);
+  // };
 
-  const hideDateTimePicker = () => {
-    setDateTimePickerVisible(false);
-  };
+  // const hideDateTimePicker = () => {
+  //   setDateTimePickerVisible(false);
+  // };
 
-  const handleDateTimeConfirm = async (selectedDate) => {
-    setTime(selectedDate);
-    setShowTime(selectedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-    hideDateTimePicker();
-  };
+  // const handleDateTimeConfirm = async (selectedDate) => {
+  //   setTime(selectedDate);
+  //   setShowTime(selectedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+  //   hideDateTimePicker();
+  // };
 
   return (
     <SafeAreaView style={[styles.container, darkModeEnabled && styles.darkModeContainer]}>
@@ -68,7 +69,7 @@ export default function CreateCategory({ navigation }) {
           />
         </View>
 
-        <Text style={[styles.label, darkModeEnabled && styles.darkModeLabel]}>Som da notificação</Text>
+        {/* <Text style={[styles.label, darkModeEnabled && styles.darkModeLabel]}>Som da notificação</Text>
         <View style={styles.inputContainer}>
           <TouchableOpacity
             style={[styles.input, darkModeEnabled && styles.darkModeInput, styles.fileInput]}
@@ -79,9 +80,9 @@ export default function CreateCategory({ navigation }) {
             </Text> 
           </TouchableOpacity>
           {sound && <Text style={[styles.fieldText, darkModeEnabled && styles.darkModeFieldText]}>{sound}</Text>}
-        </View>
+        </View> */}
 
-        <Text style={[styles.label, darkModeEnabled && styles.darkModeLabel]}>Ícone</Text>
+        {/* <Text style={[styles.label, darkModeEnabled && styles.darkModeLabel]}>Ícone</Text>
         <View style={styles.inputContainer}>
           <Picker
             selectedValue={selectedIcon}
@@ -92,11 +93,11 @@ export default function CreateCategory({ navigation }) {
               <Picker.Item key={option.value} label={option.label} value={option.value} />
             ))}
           </Picker>
-        </View>
+        </View> */}
 
-        <Text style={[styles.label, darkModeEnabled && styles.darkModeLabel]}>Notificar antes de:</Text>
-        <Text style={[styles.label, darkModeEnabled && styles.darkModeLabel]}>Hora</Text>
-        <TouchableOpacity style={styles.inputContainer} onPress={showDateTimePicker}>
+        <Text style={[styles.label, darkModeEnabled && styles.darkModeLabel]}>Notificar com antecedência</Text>
+        <Text style={[styles.label, darkModeEnabled && styles.darkModeLabel]}>Minutos:*</Text>
+        {/* <TouchableOpacity style={styles.inputContainer} onPress={showDateTimePicker}>
           <Text style={[styles.input, darkModeEnabled && styles.darkModeInput]}>
             {showTime}
           </Text>
@@ -107,7 +108,16 @@ export default function CreateCategory({ navigation }) {
           date={time}
           onConfirm={handleDateTimeConfirm}
           onCancel={hideDateTimePicker}
-        />
+        /> */}
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={[styles.input, darkModeEnabled && styles.darkModeInput]}
+            keyboardType='numeric'
+            value={minutesInAdvance}
+            onChangeText={setMinutesInAdvance}
+          />
+        </View>
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={[styles.button, darkModeEnabled && styles.darkModeButton]} onPress={createCategory}>
@@ -218,4 +228,3 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
-  

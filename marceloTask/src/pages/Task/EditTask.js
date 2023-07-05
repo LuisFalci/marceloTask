@@ -23,8 +23,20 @@ export default function EditTask(props) {
   const [taskId, setTaskId] = useState(task.id);
   const [notificationId, setNotificationId] = useState(task.notificationId);
 
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  const loadCategories = () => {
+    categoryActions.getCategories()
+      .then((response) => {
+        setCategories(response);
+      })
+      .catch((error) => console.error(`Erro ao criar nova categoria: ${error}`));
+  };
+
   const editTask = async () => {
-   
+
     await Notifications.cancelScheduledNotificationAsync(notificationId);
 
     const editedTask = {
@@ -35,8 +47,20 @@ export default function EditTask(props) {
       time: selectedTime.toISOString(),
       category: selectedCategory
     };
+
+    // Find the selected category
+    const category = categories.find((cat) => cat.id === selectedCategory);
+    let advanceMinutes = 0;
+    if (category && category.minutes) {
+      advanceMinutes = category.minutes;
+    }
     let seconds = calculateSeconds(editedTask.date, editedTask.time);
     console.log(seconds)
+    
+    if (seconds < 0) {
+      setErrorMessage("A data e hora selecionadas já se passaram");
+      return;
+    }
 
     const schedulingOptions = {
       content: {
@@ -59,36 +83,21 @@ export default function EditTask(props) {
       .catch((error) => console.error(`Erro ao editar tarefa: ${error}`));
   };
 
-  function calculateSeconds(dateString, timeString) {
-    // combine the date from dateString and the time from timeString
+  function calculateSeconds(dateString, timeString, advanceMinutes = 0) {
     let notifyDate = new Date(dateString);
     let notifyTime = new Date(timeString);
-  
-    notifyDate.setHours(notifyTime.getHours(), notifyTime.getMinutes(), notifyTime.getSeconds());
-  
-    // get the current date and time
-    let currentDate = new Date(timeString);
-    let currentTime = new Date(dateString);
-    
+
+    notifyDate.setHours(notifyTime.getHours(), notifyTime.getMinutes() - advanceMinutes, notifyTime.getSeconds());
+
+    let currentDate = new Date();
+    let currentTime = new Date();
+
     currentDate.setHours(currentTime.getHours(), currentTime.getMinutes(), currentTime.getSeconds());
-  
-    // calculate the difference in seconds
+
     let differenceInSeconds = (notifyDate.getTime() - currentDate.getTime()) / 1000;
-  
+
     return differenceInSeconds;
   }
-
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
-  const loadCategories = () => {
-    categoryActions.getCategories()
-      .then((response) => {
-        setCategories(response);
-      })
-      .catch((error) => console.error(`Erro ao criar nova categoria: ${error}`));
-  };
 
   return (
     <SafeAreaView style={[styles.container, darkModeEnabled && styles.darkModeContainer]}>
@@ -133,7 +142,7 @@ export default function EditTask(props) {
                 onPress={() => setShowDateTimePicker(true)}
               >
                 <Text style={styles.datetimeButtonText}>
-                {selectedDate.toLocaleDateString('pt-BR')}
+                  {selectedDate.toLocaleDateString('pt-BR')}
                 </Text>
               </TouchableOpacity>
               {showDateTimePicker && (
@@ -157,7 +166,7 @@ export default function EditTask(props) {
                 onPress={() => setShowTimePicker(true)}
               >
                 <Text style={styles.datetimeButtonText}>
-                {selectedTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                  {selectedTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                 </Text>
               </TouchableOpacity>
               {showTimePicker && (
@@ -268,7 +277,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     alignItems: 'center',
-    marginTop: 60,
+    marginTop: -20,
   },
   button: {
     backgroundColor: '#1C6B3C',
